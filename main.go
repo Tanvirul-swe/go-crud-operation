@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-
 	"example.com/go-crud/constants"
 	"example.com/go-crud/controllers"
 	"example.com/go-crud/database"
