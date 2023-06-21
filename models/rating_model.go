@@ -1,0 +1,11 @@
+package model
+
+import  "gorm.io/gorm"
+
+type Rating struct {
+	gorm.Model
+	ID uint `gorm:"primaryKey"`
+	BookId uint `gorm:"foreignKey:ID"`
+	UserId uint `gorm:"foreignKey:ID"`
+	Rating int
+}

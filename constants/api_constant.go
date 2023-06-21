@@ -3,13 +3,13 @@ package constants
 const (
 	ApiVersion = "v1"
 	// PostCreateSuccessMessage is the success message for post creation
-	PostCreateSuccessMessage = "Post Created Successfully"
+	BookCreateSuccessMessage = "Book Created Successfully"
 	// PostCreateFailedMessage is the failed message for post creation
-	PostCreateFailedMessage = "Post Creation Failed"
+	BookCreateFailedMessage = "Book Creation Failed"
 	// PostNotFoundMessage is the message for post not found
-	PostNotFoundMessage = "Post Not Found"
-	// PostListMessage is the message for post list
-	PostListMessage = "Posts List"
+	BookNotFoundMessage = "Book Not Found"
+	// BookListMessage is the message for Book list
+	BookListMessage = "Books List"
 	// UserCreateSuccessMessage is the success message for user creation
 	UserCreateSuccessMessage = "User Created Successfully"
 	// UserCreateFailedMessage is the failed message for user creation

@@ -19,14 +19,7 @@ func CreateUser(c *gin.Context) {
 	var user model.User
 	fmt.Println("User Creation Service")
 	c.BindJSON(&user)
-	// Check if title and body fields are not empty
-	if user.FirstName == "" {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"message":     "First Name Field is required",
-			"status_code": http.StatusBadRequest,
-		})
-		return
-	}
+
 	// Check if title and body fields are not empty
 
 	if user.Email == "" {
