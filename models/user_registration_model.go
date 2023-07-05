@@ -4,8 +4,10 @@ import "gorm.io/gorm"
 
 type User struct {
 	gorm.Model
-	FirstName string
-	LastName  string
+	ID 	  uint `gorm:"primaryKey"`
+	Name	  string
 	Email     string
 	Password  string
+	Image	 string
+	Address   string
 }

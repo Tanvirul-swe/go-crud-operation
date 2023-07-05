@@ -21,8 +21,13 @@ func main() {
 	// So use this function only when you need to drop the table and create the table again
 	// If you want to add a new column to the table then you can use AutoMigrate() function
 	err :=
-	database.DB.AutoMigrate(&model.Post{})
+	database.DB.AutoMigrate(&model.Books{})
 	database.DB.AutoMigrate(&model.User{})
+	database.DB.AutoMigrate(&model.Category{})
+	database.DB.AutoMigrate(&model.Followers{})
+	database.DB.AutoMigrate(&model.Comments{})
+	database.DB.AutoMigrate(&model.UserFevoriteBook{})
+	database.DB.AutoMigrate(&model.Rating{})
 	if err != nil {
 		log.Fatal("Error while creating table")
 	}
