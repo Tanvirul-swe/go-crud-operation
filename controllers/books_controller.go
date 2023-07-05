@@ -116,12 +116,11 @@ func GetSingleBookById(c *gin.Context) {
 	bookId := c.Param("Id")
 
 	//Get post
-	var book model.Books
+      var book model.Books
 	// result := database.DB.First(&book, bookId)
 	// Return result as JSON response with status code 400 if there is an error or post not found in database
 	// RowsAffected is 0 if no record found
-	result:=database.DB.Table("books").Joins("left join books on books.category = categories.id").Scan(&book)
-
+	result:= database.DB.Preload("Categorys").First(&book,bookId)
    fmt.Println("Book Id : ",bookId)
    fmt.Println("response is : ",book)
 	if result.Error != nil && result.RowsAffected == 0 {
@@ -139,10 +138,12 @@ func GetSingleBookById(c *gin.Context) {
 	}
 	
 	//Return response as JSON with status code 200
+	
 	c.JSON(http.StatusOK, gin.H{
 		"message":     "Book Details",
 		"status_code": http.StatusOK,
 		"book":    book,
+		
 	})
 
 }

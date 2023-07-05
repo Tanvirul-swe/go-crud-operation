@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+
 	"example.com/go-crud/constants"
 	"example.com/go-crud/controllers"
 	"example.com/go-crud/database"
@@ -12,6 +13,13 @@ import (
 func main() {
 	fmt.Println("API Version : " + constants.ApiVersion)
 	database.Init()
+	// database.DB.AutoMigrate(&model.Books{})
+	// database.DB.AutoMigrate(&model.User{})
+	// database.DB.AutoMigrate(&model.Category{})
+	// database.DB.AutoMigrate(&model.Followers{})
+	// database.DB.AutoMigrate(&model.Comments{})
+	// database.DB.AutoMigrate(&model.UserFevoriteBook{})
+	// database.DB.AutoMigrate(&model.Rating{})
 	r := gin.Default()
 	r.POST("/"+constants.ApiVersion+"/create-book", controllers.BookCreate)
 	r.GET("/"+constants.ApiVersion+"/books", controllers.BooksList)

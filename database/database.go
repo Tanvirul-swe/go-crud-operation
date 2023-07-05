@@ -14,6 +14,7 @@ var DB *gorm.DB
 func Init() {
 	configuration.LoadEnvVariables()
 	ConnectToDB()
+
 }
 
 func ConnectToDB() {
@@ -22,6 +23,7 @@ func ConnectToDB() {
 	// DB_URL is the key and the value is the connection string
 	dsn := os.Getenv("DB_URL")
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+
 	DB = db
 	if err != nil {
 		fmt.Println(err)
