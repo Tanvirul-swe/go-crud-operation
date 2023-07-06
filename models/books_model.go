@@ -11,7 +11,7 @@ type Books struct {
 	Discription string   `json:"discription"`
 	Image       string   `json:"image"`
 	Book_Url    string   `json:"book_url"`
-	User_Id     int      `gorm:"foreignKey:ID"`
+	User_Id     int      `gorm:"foreignKey:User_Id"`
 	Status      int      `json:"status"`
 	Categorys   Category `gorm:"foreignKey:Category"`
 }
