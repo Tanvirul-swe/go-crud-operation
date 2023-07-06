@@ -38,7 +38,28 @@ func CreateUser(c *gin.Context) {
 		return
 
 	}
+	if user.Name == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "Name Field is required",
+		})
+		return
+	}
 
+	if user.Address == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "Address Field is required",
+		})
+		return
+
+	}
+
+	hasUser := database.DB.Where("email = ?", user.Email).First(&user)
+	if hasUser.RowsAffected > 0 {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "Email Already Exists",
+		})
+		return
+	}
 	hash, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
@@ -85,13 +106,14 @@ func UserLogin(c *gin.Context) {
 	}
 
 	if user.Password == "" {
-		c.JSON(400, gin.H{
+		c.JSON(http.StatusBadRequest, gin.H{
 			"message":     "Password Field is required",
 			"status_code": http.StatusBadRequest,
 		})
 		return
 
 	}
+
 	// Find user by email and password in database using GORM ORM and store result in user variable
 	result := database.DB.Where("email = ?", user.Email).First(&user)
 
@@ -104,20 +126,13 @@ func UserLogin(c *gin.Context) {
 		return
 	}
 
-	if result.Error != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"message":     constants.StatusInternalServerError,
-			"status_code": http.StatusInternalServerError,
-		})
-		return
-	}
 	// Compare password from request with password from database using bcrypt package and store result in err variable
 	err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password))
 	fmt.Println(err)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
+		c.JSON(http.StatusUnauthorized, gin.H{
 			"message":     "Invalid Credentials",
-			"status_code": http.StatusInternalServerError,
+			"status_code": http.StatusUnauthorized,
 		})
 		return
 	}
@@ -143,8 +158,9 @@ func UserLogin(c *gin.Context) {
 	userToken, err := token.SignedString([]byte(os.Getenv("JWT_SECRET")))
 	fmt.Printf("User Token: %v\n", userToken)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"message": constants.StatusInternalServerError,
+		c.JSON(http.StatusUnauthorized, gin.H{
+			"message":     "Unauthorized User",
+			"status_code": http.StatusUnauthorized,
 		})
 	}
 	// Set cookie with token value and set SameSite to None and Secure to true for cross site request and https request respectively

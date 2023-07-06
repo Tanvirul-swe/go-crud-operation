@@ -16,6 +16,7 @@ func BookCreate(c *gin.Context) {
 	var book model.Books
 	//Bind JSON body to model
 	c.BindJSON(&book)
+	fmt.Println("Book Category is : ", book.Category)
 	// Check if title and body fields are not empty
 	fmt.Println("Author Name is : ", book.Author_Name)
 	if book.Author_Name == "" {
@@ -116,13 +117,13 @@ func GetSingleBookById(c *gin.Context) {
 	bookId := c.Param("Id")
 
 	//Get post
-      var book model.Books
+	var book model.Books
 	// result := database.DB.First(&book, bookId)
 	// Return result as JSON response with status code 400 if there is an error or post not found in database
 	// RowsAffected is 0 if no record found
-	result:= database.DB.Preload("Categorys").First(&book,bookId)
-   fmt.Println("Book Id : ",bookId)
-   fmt.Println("response is : ",book)
+	result := database.DB.Preload("Categorys").First(&book, bookId)
+	fmt.Println("Book Id : ", bookId)
+	fmt.Println("response is : ", book)
 	if result.Error != nil && result.RowsAffected == 0 {
 		c.JSON(http.StatusNotFound, gin.H{
 			"status_code": http.StatusNotFound,
@@ -136,14 +137,13 @@ func GetSingleBookById(c *gin.Context) {
 		})
 		return
 	}
-	
+
 	//Return response as JSON with status code 200
-	
+
 	c.JSON(http.StatusOK, gin.H{
 		"message":     "Book Details",
 		"status_code": http.StatusOK,
-		"book":    book,
-		
+		"book":        book,
 	})
 
 }
@@ -159,26 +159,72 @@ func BookUpdate(c *gin.Context) {
 
 	c.BindJSON(&book)
 
-	if book.Name == "" {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"message":     "Name Field is required",
-			"status_code": http.StatusBadRequest,
-		})
-		return
-	}
-	// Check if title and body fields are not empty
-
 	if book.Author_Name == "" {
-		c.JSON(400, gin.H{
+		c.JSON(http.StatusBadRequest, gin.H{
 			"message":     "AuthorName Field is required",
 			"status_code": http.StatusBadRequest,
 		})
 		return
 
 	}
+	if book.Name == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message":     "Name Field is required",
+			"status_code": http.StatusBadRequest,
+		})
+		return
+
+	}
+	if book.Category == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message":     "Category Field is required",
+			"status_code": http.StatusBadRequest,
+		})
+		return
+
+	}
+
+	if book.Discription == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message":     "Discription Field is required",
+			"status_code": http.StatusBadRequest,
+		})
+		return
+
+	}
+	if book.Book_Url == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message":     "BookUrl Field is required",
+			"status_code": http.StatusBadRequest,
+		})
+		return
+	}
+	if book.Image == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message":     "Image Field is required",
+			"status_code": http.StatusBadRequest,
+		})
+		return
+	}
+
+	if book.User_Id == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message":     "UserId Field is required",
+			"status_code": http.StatusBadRequest,
+		})
+		return
+	}
+
+	if book.Status == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message":     "Status Field is required",
+			"status_code": http.StatusBadRequest,
+		})
+		return
+	}
 
 	//Update Post
-	result := database.DB.Model(&book).Where("id = ?", bookId).Updates(&book)
+	result := database.DB.Model(&book).Where("id = ?", bookId).Updates(&book).Preload("Categorys").First(&book, bookId)
 
 	// Return result as JSON response with status code 400 if there is an error or post not found in database
 	// RowsAffected is 0 if no record found
@@ -186,7 +232,7 @@ func BookUpdate(c *gin.Context) {
 	if result.Error != nil && result.RowsAffected == 0 {
 		c.JSON(http.StatusNotFound, gin.H{
 			"status_code": http.StatusNotFound,
-			"message":     "Book Not Found",
+			"message":     "Book Id Found",
 		})
 		return
 	}
@@ -199,41 +245,26 @@ func BookUpdate(c *gin.Context) {
 
 	//Return response as JSON with status code 200
 	c.JSON(http.StatusAccepted, gin.H{
-		"message":     "Post Updated Successfully",
+		"message":     "Book Updated Successfully",
 		"status_code": http.StatusAccepted,
 		"book":        book,
 	})
 
 }
 
-func PostDelete(c *gin.Context) {
+func BookDeleteById(c *gin.Context) {
 
-	//Get post id from request
-	postId := c.Param("Id")
-
-	//Get post
-	var post model.Books
-	result := database.DB.First(&post, postId)
-	// Return result as JSON response with status code 400 if there is an error or post not found in database
-	// RowsAffected is 0 if no record found
-
-	if result.Error != nil && result.RowsAffected == 0 {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status_code": http.StatusBadRequest,
-			"message":     "Post Not Found",
-		})
-		return
-	}
-	if result.Error != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"message": result.Error.Error(),
-		})
-		return
-	}
-
+	bookId := c.Param("Id")
+	fmt.Println("Book Id : ", bookId)
 	//Delete Post
-	database.DB.Delete(&post)
-
+	result := database.DB.Delete(&model.Books{}, bookId)
+	if result.Error != nil && result.RowsAffected == 0 {
+		c.JSON(http.StatusNotFound, gin.H{
+			"status_code": http.StatusNotFound,
+			"message":     "Book Not Found",
+		})
+		return
+	}
 	//Return response as JSON with status code 200
 	c.JSON(http.StatusOK, gin.H{
 		"message":     "Post Deleted Successfully",

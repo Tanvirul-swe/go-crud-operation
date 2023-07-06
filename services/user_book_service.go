@@ -11,7 +11,8 @@ func BooksList(c *gin.Context) {
 
 	//Get all posts
 	var book []model.Books
-	database.DB.Find(&book)
+	 database.DB.Preload("Categorys").Find(&book)
+
   
 	//Return response as JSON with status code 200
 	c.JSON(http.StatusOK, gin.H{
